@@ -2,137 +2,79 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Badge } from '@/components/ui/badge';
-import { Award, Clock, Star, Timer } from 'lucide-react';
+import { Trophy, Target, Calendar, TrendingUp } from 'lucide-react';
 
 interface StatsPanelProps {
   completedChallenges: number;
+  totalChallenges: number;
   totalPoints: number;
   currentDay: number;
+  totalDays: number;
+  ranking: number;
   progressPercentage: number;
 }
 
 const StatsPanel: React.FC<StatsPanelProps> = ({
   completedChallenges,
+  totalChallenges,
   totalPoints,
   currentDay,
+  totalDays,
+  ranking,
   progressPercentage
 }) => {
-  const stats = [
-    {
-      icon: Award,
-      label: 'Challenges',
-      value: `${completedChallenges}/5`,
-      color: 'text-green-400',
-      bgColor: 'bg-green-500/20'
-    },
-    {
-      icon: Star,
-      label: 'Points',
-      value: totalPoints.toLocaleString(),
-      color: 'text-yellow-400',
-      bgColor: 'bg-yellow-500/20'
-    },
-    {
-      icon: Clock,
-      label: 'Jours',
-      value: `${currentDay}/7`,
-      color: 'text-blue-400',
-      bgColor: 'bg-blue-500/20'
-    },
-    {
-      icon: Timer,
-      label: 'Progression',
-      value: `${progressPercentage}%`,
-      color: 'text-purple-400',
-      bgColor: 'bg-purple-500/20'
-    }
-  ];
-
-  const getRank = (points: number) => {
-    if (points >= 750) return { rank: 'Champion', color: 'text-yellow-400', badge: '🏆' };
-    if (points >= 600) return { rank: 'Expert', color: 'text-purple-400', badge: '⭐' };
-    if (points >= 450) return { rank: 'Avancé', color: 'text-blue-400', badge: '🔥' };
-    if (points >= 300) return { rank: 'Intermédiaire', color: 'text-green-400', badge: '💪' };
-    return { rank: 'Débutant', color: 'text-gray-400', badge: '🌱' };
-  };
-
-  const currentRank = getRank(totalPoints);
-
   return (
-    <Card className="bg-white/10 backdrop-blur-md border-white/20">
-      <CardHeader>
-        <CardTitle className="text-white flex items-center gap-2">
-          <Award className="w-5 h-5" />
-          Tes Statistiques
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        {/* Stats Grid */}
-        <div className="grid grid-cols-2 gap-4">
-          {stats.map((stat, index) => {
-            const IconComponent = stat.icon;
-            return (
-              <div
-                key={index}
-                className={`${stat.bgColor} rounded-lg p-4 backdrop-blur-sm`}
-              >
-                <div className="flex items-center gap-2 mb-2">
-                  <IconComponent className={`w-4 h-4 ${stat.color}`} />
-                  <span className="text-gray-300 text-sm">{stat.label}</span>
-                </div>
-                <div className={`text-xl font-bold ${stat.color}`}>
-                  {stat.value}
-                </div>
-              </div>
-            );
-          })}
-        </div>
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <Card className="bg-gradient-to-br from-blue-500/20 to-purple-500/20 backdrop-blur-md border-blue-400/30">
+        <CardContent className="p-4 text-center">
+          <Target className="w-6 h-6 text-blue-400 mx-auto mb-2" />
+          <div className="text-2xl font-bold text-white">{completedChallenges}/{totalChallenges}</div>
+          <div className="text-xs text-blue-200">Challenges</div>
+        </CardContent>
+      </Card>
 
-        {/* Progress Bar */}
-        <div className="space-y-2">
-          <div className="flex justify-between text-sm">
-            <span className="text-gray-300">Progression vers la récompense</span>
-            <span className="text-white font-medium">{progressPercentage}%</span>
-          </div>
-          <Progress 
-            value={progressPercentage} 
-            className="h-3 bg-white/10"
-          />
-          <p className="text-xs text-gray-400">
-            {progressPercentage >= 90 ? '🎉 Récompense débloquée !' : `${90 - progressPercentage}% restant pour débloquer`}
-          </p>
-        </div>
+      <Card className="bg-gradient-to-br from-yellow-500/20 to-orange-500/20 backdrop-blur-md border-yellow-400/30">
+        <CardContent className="p-4 text-center">
+          <Trophy className="w-6 h-6 text-yellow-400 mx-auto mb-2" />
+          <div className="text-2xl font-bold text-white">{totalPoints}</div>
+          <div className="text-xs text-yellow-200">Points</div>
+        </CardContent>
+      </Card>
 
-        {/* Current Rank */}
-        <div className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-lg p-4 backdrop-blur-sm">
-          <div className="text-center">
-            <div className="text-2xl mb-2">{currentRank.badge}</div>
-            <Badge className={`${currentRank.color} bg-transparent border border-current`}>
-              {currentRank.rank}
-            </Badge>
-            <p className="text-gray-300 text-sm mt-2">
-              Ton niveau actuel
+      <Card className="bg-gradient-to-br from-green-500/20 to-teal-500/20 backdrop-blur-md border-green-400/30">
+        <CardContent className="p-4 text-center">
+          <Calendar className="w-6 h-6 text-green-400 mx-auto mb-2" />
+          <div className="text-2xl font-bold text-white">{currentDay}/{totalDays}</div>
+          <div className="text-xs text-green-200">Jours</div>
+        </CardContent>
+      </Card>
+
+      <Card className="bg-gradient-to-br from-purple-500/20 to-pink-500/20 backdrop-blur-md border-purple-400/30">
+        <CardContent className="p-4 text-center">
+          <TrendingUp className="w-6 h-6 text-purple-400 mx-auto mb-2" />
+          <div className="text-2xl font-bold text-white">#{ranking}</div>
+          <div className="text-xs text-purple-200">Classement</div>
+        </CardContent>
+      </Card>
+
+      <Card className="col-span-2 md:col-span-4 bg-white/10 backdrop-blur-md border-white/20">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-white text-lg">Progression vers la récompense</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-2">
+            <div className="flex justify-between text-sm">
+              <span className="text-white">Progression</span>
+              <span className="text-yellow-400 font-bold">{progressPercentage}%</span>
+            </div>
+            <Progress value={progressPercentage} className="h-3" />
+            <p className="text-gray-300 text-xs text-center">
+              {progressPercentage >= 90 ? 'Formation débloquée !' : '90% requis pour débloquer la formation'}
             </p>
           </div>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="space-y-2">
-          <h4 className="text-white font-medium text-sm">Actions rapides</h4>
-          <div className="grid gap-2">
-            <button className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 hover:from-blue-500/30 hover:to-purple-500/30 rounded-lg p-3 text-left transition-all">
-              <div className="text-white text-sm font-medium">Voir mon classement</div>
-              <div className="text-gray-400 text-xs">Position dans le leaderboard</div>
-            </button>
-            <button className="bg-gradient-to-r from-green-500/20 to-blue-500/20 hover:from-green-500/30 hover:to-blue-500/30 rounded-lg p-3 text-left transition-all">
-              <div className="text-white text-sm font-medium">Historique des points</div>
-              <div className="text-gray-400 text-xs">Détail de tes gains</div>
-            </button>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 
