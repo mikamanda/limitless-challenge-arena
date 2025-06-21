@@ -34,7 +34,7 @@ const Timeline: React.FC<TimelineProps> = ({ currentDay, startDate, isExpired })
             <div className={`
               relative z-10 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold
               ${day.isPast ? 'bg-green-500 text-white' : ''}
-              ${day.isCurrent ? 'bg-yellow-500 text-white animate-pulse' : ''}
+              ${day.isCurrent ? 'bg-yellow-500 text-black animate-pulse' : ''}
               ${day.isFuture ? 'bg-gray-400 text-white' : ''}
               ${day.isExpired ? 'bg-red-500 text-white' : ''}
             `}>
@@ -48,7 +48,7 @@ const Timeline: React.FC<TimelineProps> = ({ currentDay, startDate, isExpired })
                   <h4 className="text-white font-medium">
                     Jour {day.day}
                   </h4>
-                  <p className="text-gray-300 text-sm">
+                  <p className="text-gray-200 text-sm">
                     {day.date.toLocaleDateString('fr-FR', { 
                       weekday: 'long', 
                       day: 'numeric', 
@@ -59,22 +59,22 @@ const Timeline: React.FC<TimelineProps> = ({ currentDay, startDate, isExpired })
                 
                 <div>
                   {day.isPast && (
-                    <Badge className="bg-green-500 text-white">
+                    <Badge className="bg-green-500 text-white border-0">
                       Terminé
                     </Badge>
                   )}
                   {day.isCurrent && (
-                    <Badge className="bg-yellow-500 text-white animate-pulse">
+                    <Badge className="bg-yellow-500 text-black border-0 animate-pulse">
                       En cours
                     </Badge>
                   )}
                   {day.isFuture && (
-                    <Badge className="bg-gray-400 text-white">
+                    <Badge className="bg-gray-600 text-white border-0">
                       À venir
                     </Badge>
                   )}
                   {day.isExpired && (
-                    <Badge className="bg-red-500 text-white">
+                    <Badge className="bg-red-500 text-white border-0">
                       Expiré
                     </Badge>
                   )}
@@ -85,9 +85,9 @@ const Timeline: React.FC<TimelineProps> = ({ currentDay, startDate, isExpired })
         ))}
       </div>
       
-      <div className="mt-6 p-4 bg-white/10 rounded-lg backdrop-blur-sm">
-        <p className="text-gray-200 text-sm text-center">
-          <span className="font-medium">Challenge commencé le :</span> {' '}
+      <div className="mt-6 p-4 bg-white/10 rounded-lg backdrop-blur-sm border border-white/20">
+        <p className="text-white text-sm text-center font-medium">
+          <span className="font-semibold">Challenge commencé le :</span> {' '}
           {startDate.toLocaleDateString('fr-FR', { 
             day: 'numeric', 
             month: 'long', 
