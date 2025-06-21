@@ -1,8 +1,7 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Crown, Medal, Award } from 'lucide-react';
+import { Crown, Medal, Award, Trophy } from 'lucide-react';
 
 interface LeaderboardEntry {
   id: number;
