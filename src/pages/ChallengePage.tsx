@@ -1,8 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Progress } from '@/components/ui/progress';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ChallengeTimer from '@/components/ChallengeTimer';
 import ChallengeGrid from '@/components/ChallengeGrid';
 import Timeline from '@/components/Timeline';
@@ -10,146 +12,168 @@ import ChallengeForm from '@/components/ChallengeForm';
 import StatsPanel from '@/components/StatsPanel';
 import Leaderboard from '@/components/Leaderboard';
 import RewardSection from '@/components/RewardSection';
+import { Award, Star, Timer, Flag } from 'lucide-react';
 
 const ChallengePage = () => {
-  const navigate = useNavigate();
+  const [currentDay, setCurrentDay] = useState(4);
+  const [completedChallenges, setCompletedChallenges] = useState([1, 2, 3]);
+  const [totalPoints, setTotalPoints] = useState(450);
+  const [progressPercentage, setProgressPercentage] = useState(78);
   
-  // Simulation de données
-  const [startDate] = useState(new Date(2024, 0, 15)); // 15 janvier 2024
-  const [currentDay, setCurrentDay] = useState(3);
-  const [selectedChallenge, setSelectedChallenge] = useState<number | null>(null);
-  
+  // Challenge expiration date (7 days from start)
+  const startDate = new Date('2025-06-18');
   const expirationDate = new Date(startDate);
   expirationDate.setDate(startDate.getDate() + 7);
   
   const isExpired = new Date() > expirationDate;
+  const isCompleted = completedChallenges.length >= 5;
 
-  const challenges = [
-    { id: 1, title: '🎯 Challenge Social Media', status: 'completed' as const, points: 150 },
-    { id: 2, title: '📸 Challenge Photo', status: 'completed' as const, points: 200 },
-    { id: 3, title: '💪 Challenge Fitness', status: 'current' as const, points: 250 },
-    { id: 4, title: '📚 Challenge Learning', status: 'todo' as const, points: 180 },
-    { id: 5, title: '🌟 Challenge Final', status: 'todo' as const, points: 300 }
-  ];
-
-  const leaderboardData = [
-    { id: 1, name: 'Alice Martin', progress: '5/5 challenges', status: 'completed' as const, points: 1080 },
-    { id: 2, name: 'Thomas Dubois', progress: '4/5 challenges', status: 'active' as const, points: 780 },
-    { id: 3, name: 'Marie Durand', progress: '3/5 challenges', status: 'active' as const, points: 600, isCurrentUser: true },
-    { id: 4, name: 'Pierre Leblanc', progress: '2/5 challenges', status: 'active' as const, points: 350 },
-    { id: 5, name: 'Sophie Garcia', progress: '1/5 challenges', status: 'expired' as const, points: 150 }
-  ];
-
-  const completedChallenges = challenges.filter(c => c.status === 'completed').length;
-  const totalPoints = challenges.filter(c => c.status === 'completed').reduce((sum, c) => sum + c.points, 0);
-  const progressPercentage = Math.round((completedChallenges / challenges.length) * 100);
-
-  const handleChallengeClick = (challengeId: number) => {
-    setSelectedChallenge(challengeId);
+  const currentChallenge = {
+    id: 4,
+    title: "Partage ton évolution",
+    description: "Crée un post Instagram montrant ta progression et inspire ta communauté",
+    type: "social",
+    points: 150
   };
 
-  const handleFormSubmit = (data: FormData) => {
-    console.log('Form submitted:', data);
-    // Ici vous pourriez traiter les données du formulaire
-    setSelectedChallenge(null);
-  };
-
-  const handleClaimReward = () => {
-    console.log('Reward claimed!');
-    // Ici vous pourriez rediriger vers la formation
+  const handleChallengeSubmit = (challengeId: number, data: any) => {
+    console.log('Challenge submitted:', challengeId, data);
+    if (!completedChallenges.includes(challengeId)) {
+      setCompletedChallenges([...completedChallenges, challengeId]);
+      setTotalPoints(prev => prev + currentChallenge.points);
+      setProgressPercentage(prev => Math.min(prev + 18, 100));
+    }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800">
       <div className="container mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <Button
-            onClick={() => navigate('/')}
-            variant="ghost"
-            className="text-white hover:bg-white/10"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Retour
-          </Button>
-          <h1 className="text-3xl md:text-4xl font-bold text-white text-center">
-            🔥 Challenge 7 Jours Limitless
+        {/* Header with Timer */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
+            Challenge 5 Jours Limitless
           </h1>
-          <div></div>
-        </div>
-
-        {/* Timer urgent */}
-        <div className="mb-8">
+          <p className="text-xl text-purple-200 mb-6">
+            Débloque ta formation exclusive de 197€ !
+          </p>
           <ChallengeTimer expirationDate={expirationDate} isExpired={isExpired} />
         </div>
 
-        {/* Stats Panel */}
-        <div className="mb-8">
-          <StatsPanel
-            completedChallenges={completedChallenges}
-            totalChallenges={challenges.length}
-            totalPoints={totalPoints}
-            currentDay={currentDay}
-            totalDays={7}
-            ranking={3}
-            progressPercentage={progressPercentage}
-          />
-        </div>
-
         {/* Reward Section */}
-        <div className="mb-8">
-          <RewardSection
-            formationValue="197€"
-            progressPercentage={progressPercentage}
-            isUnlocked={progressPercentage >= 90}
-            onClaim={handleClaimReward}
-          />
-        </div>
+        <RewardSection 
+          progressPercentage={progressPercentage}
+          isCompleted={isCompleted}
+          rewardValue="197€"
+        />
 
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Colonne principale */}
+        {/* Main Content */}
+        <div className="grid lg:grid-cols-3 gap-8 mt-8">
+          {/* Left Column - Challenges & Timeline */}
           <div className="lg:col-span-2 space-y-8">
-            {/* Grille des challenges */}
-            <div>
-              <h2 className="text-2xl font-bold text-white mb-6 text-center">
-                🎯 Tes Challenges
-              </h2>
-              <ChallengeGrid challenges={challenges} onChallengeClick={handleChallengeClick} />
-            </div>
-
-            {/* Formulaire du challenge sélectionné */}
-            {selectedChallenge && (
-              <div>
-                <h2 className="text-2xl font-bold text-white mb-6 text-center">
-                  📝 Challenge du Jour
-                </h2>
-                <ChallengeForm
-                  challengeId={selectedChallenge}
-                  challengeTitle={challenges.find(c => c.id === selectedChallenge)?.title || ''}
-                  onSubmit={handleFormSubmit}
+            {/* Challenge Grid */}
+            <Card className="bg-white/10 backdrop-blur-md border-white/20">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center gap-2">
+                  <Flag className="w-5 h-5" />
+                  Tes Challenges
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ChallengeGrid 
+                  completedChallenges={completedChallenges}
+                  currentDay={currentDay}
+                  isExpired={isExpired}
                 />
-              </div>
+              </CardContent>
+            </Card>
+
+            {/* Timeline */}
+            <Card className="bg-white/10 backdrop-blur-md border-white/20">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center gap-2">
+                  <Timer className="w-5 h-5" />
+                  Timeline - 7 Jours
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Timeline 
+                  currentDay={currentDay}
+                  startDate={startDate}
+                  isExpired={isExpired}
+                />
+              </CardContent>
+            </Card>
+
+            {/* Current Challenge */}
+            {!isExpired && !isCompleted && (
+              <Card className="bg-gradient-to-br from-yellow-400/20 to-orange-500/20 backdrop-blur-md border-yellow-400/30">
+                <CardHeader>
+                  <CardTitle className="text-white flex items-center gap-2">
+                    <Star className="w-5 h-5 text-yellow-400" />
+                    Challenge du Jour {currentDay}
+                  </CardTitle>
+                  <p className="text-purple-200">{currentChallenge.description}</p>
+                </CardHeader>
+                <CardContent>
+                  <ChallengeForm 
+                    challenge={currentChallenge}
+                    onSubmit={handleChallengeSubmit}
+                    isCompleted={completedChallenges.includes(currentChallenge.id)}
+                  />
+                </CardContent>
+              </Card>
             )}
           </div>
 
-          {/* Sidebar */}
+          {/* Right Column - Stats & Leaderboard */}
           <div className="space-y-8">
-            {/* Timeline */}
-            <div>
-              <h2 className="text-xl font-bold text-white mb-4">📅 Timeline</h2>
-              <Timeline
-                currentDay={currentDay}
-                startDate={startDate}
-                isExpired={isExpired}
-              />
-            </div>
+            {/* Stats Panel */}
+            <StatsPanel 
+              completedChallenges={completedChallenges.length}
+              totalPoints={totalPoints}
+              currentDay={currentDay}
+              progressPercentage={progressPercentage}
+            />
 
             {/* Leaderboard */}
-            <div>
-              <Leaderboard entries={leaderboardData} />
-            </div>
+            <Leaderboard currentUserPoints={totalPoints} />
           </div>
         </div>
+
+        {/* Success/Expiry States */}
+        {isCompleted && (
+          <Card className="mt-8 bg-gradient-to-br from-green-400/20 to-emerald-500/20 backdrop-blur-md border-green-400/30">
+            <CardContent className="text-center py-12">
+              <Award className="w-16 h-16 text-green-400 mx-auto mb-4" />
+              <h2 className="text-3xl font-bold text-white mb-4">
+                Félicitations ! 🎉
+              </h2>
+              <p className="text-green-200 text-lg mb-6">
+                Tu as débloqué ta formation exclusive de 197€ !
+              </p>
+              <Button size="lg" className="bg-green-500 hover:bg-green-600">
+                Accéder à ma formation
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
+        {isExpired && !isCompleted && (
+          <Card className="mt-8 bg-gradient-to-br from-red-400/20 to-pink-500/20 backdrop-blur-md border-red-400/30">
+            <CardContent className="text-center py-12">
+              <Timer className="w-16 h-16 text-red-400 mx-auto mb-4" />
+              <h2 className="text-3xl font-bold text-white mb-4">
+                Challenge Expiré ⏰
+              </h2>
+              <p className="text-red-200 text-lg mb-4">
+                Le temps est écoulé ! Tu as complété {completedChallenges.length}/5 challenges.
+              </p>
+              <p className="text-red-200">
+                Points gagnés : {totalPoints}
+              </p>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );

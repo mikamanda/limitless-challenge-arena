@@ -1,104 +1,123 @@
 
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Gift, Sparkles, Lock } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Star, Award, Sparkles } from 'lucide-react';
 
 interface RewardSectionProps {
-  formationValue: string;
   progressPercentage: number;
-  isUnlocked: boolean;
-  onClaim?: () => void;
+  isCompleted: boolean;
+  rewardValue: string;
 }
 
 const RewardSection: React.FC<RewardSectionProps> = ({
-  formationValue,
   progressPercentage,
-  isUnlocked,
-  onClaim
+  isCompleted,
+  rewardValue
 }) => {
   return (
-    <Card className={`relative overflow-hidden ${
-      isUnlocked 
-        ? 'bg-gradient-to-r from-green-500/30 to-emerald-500/30 border-green-400/50' 
-        : 'bg-gradient-to-r from-purple-500/30 to-pink-500/30 border-purple-400/30'
-    }`}>
-      {/* Animation brillance */}
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-pulse"></div>
-      
-      <CardHeader className="text-center relative z-10">
-        <div className="flex items-center justify-center gap-2 mb-2">
-          {isUnlocked ? (
-            <Gift className="w-8 h-8 text-green-400" />
+    <Card className={`
+      ${isCompleted 
+        ? 'bg-gradient-to-br from-green-400/30 to-emerald-500/30 border-green-400/50 animate-pulse' 
+        : 'bg-gradient-to-br from-yellow-400/30 to-orange-500/30 border-yellow-400/50'
+      } 
+      backdrop-blur-md relative overflow-hidden
+    `}>
+      {/* Sparkle animation overlay */}
+      <div className="absolute inset-0 opacity-20">
+        <div className="absolute top-4 left-8 animate-ping">
+          <Sparkles className="w-4 h-4 text-yellow-300" />
+        </div>
+        <div className="absolute top-12 right-12 animate-ping delay-500">
+          <Star className="w-3 h-3 text-orange-300" />
+        </div>
+        <div className="absolute bottom-8 left-16 animate-ping delay-1000">
+          <Sparkles className="w-3 h-3 text-yellow-300" />
+        </div>
+        <div className="absolute bottom-4 right-8 animate-ping delay-700">
+          <Star className="w-4 h-4 text-orange-300" />
+        </div>
+      </div>
+
+      <CardContent className="p-8 text-center relative z-10">
+        <div className="mb-6">
+          <Award className={`w-16 h-16 mx-auto mb-4 ${
+            isCompleted ? 'text-green-400' : 'text-yellow-400'
+          }`} />
+          
+          <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
+            Formation Exclusive
+          </h2>
+          
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <Badge className="bg-red-500 text-white font-bold text-lg px-4 py-2">
+              Valeur {rewardValue}
+            </Badge>
+            <Badge className="bg-green-500 text-white font-bold text-lg px-4 py-2">
+              GRATUITE
+            </Badge>
+          </div>
+          
+          <p className="text-gray-200 max-w-md mx-auto">
+            "Les Secrets de la Croissance Limitless" - Formation avancée pour passer au niveau supérieur
+          </p>
+        </div>
+
+        {/* Progress Section */}
+        <div className="space-y-4">
+          {isCompleted ? (
+            <div className="space-y-4">
+              <div className="text-green-300 text-xl font-bold animate-bounce">
+                🎉 FORMATION DÉBLOQUÉE ! 🎉
+              </div>
+              <Progress value={100} className="h-4 bg-white/20" />
+              <p className="text-green-200">
+                Félicitations ! Ta formation t'attend dans ton espace membre.
+              </p>
+            </div>
           ) : (
-            <Lock className="w-8 h-8 text-purple-400" />
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <span className="text-white font-medium">Progression vers le déblocage</span>
+                <span className="text-yellow-300 font-bold">{progressPercentage}%</span>
+              </div>
+              
+              <Progress 
+                value={progressPercentage} 
+                className="h-4 bg-white/20"
+              />
+              
+              <div className="text-yellow-200">
+                {progressPercentage >= 90 ? (
+                  <span className="animate-pulse font-medium">
+                    ✨ Plus qu'un challenge pour débloquer ! ✨
+                  </span>
+                ) : (
+                  <span>
+                    {Math.ceil((90 - progressPercentage) / 18)} challenges restants 
+                    <span className="text-yellow-400 font-medium"> (90% requis)</span>
+                  </span>
+                )}
+              </div>
+            </div>
           )}
-          <Sparkles className="w-6 h-6 text-yellow-400 animate-bounce" />
         </div>
-        <CardTitle className="text-white text-2xl">
-          {isUnlocked ? '🎉 Formation Débloquée !' : '🎁 Formation à Débloquer'}
-        </CardTitle>
-      </CardHeader>
-      
-      <CardContent className="relative z-10 space-y-6">
-        <div className="text-center">
-          <div className="text-4xl font-bold text-transparent bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text mb-2">
-            {formationValue}
+
+        {/* Reward Features */}
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+          <div className="bg-white/10 rounded-lg p-3 backdrop-blur-sm">
+            <div className="text-yellow-400 font-medium">🎯 Stratégies avancées</div>
+            <div className="text-gray-300">Techniques exclusives</div>
           </div>
-          <p className="text-white font-medium">Formation Exclusive Limitless</p>
-          <p className="text-gray-300 text-sm mt-2">
-            Accès à vie • Contenu premium • Communauté VIP
-          </p>
-        </div>
-
-        <div className="space-y-3">
-          <div className="flex justify-between text-sm">
-            <span className="text-white">Progression</span>
-            <span className={`font-bold ${isUnlocked ? 'text-green-400' : 'text-yellow-400'}`}>
-              {progressPercentage}%
-            </span>
+          <div className="bg-white/10 rounded-lg p-3 backdrop-blur-sm">
+            <div className="text-yellow-400 font-medium">🚀 Cas d'études</div>
+            <div className="text-gray-300">Exemples concrets</div>
           </div>
-          <Progress 
-            value={progressPercentage} 
-            className={`h-4 ${isUnlocked ? 'bg-green-900' : 'bg-purple-900'}`} 
-          />
-          <p className="text-center text-sm">
-            {isUnlocked ? (
-              <span className="text-green-400 font-medium">🎉 Félicitations ! Vous avez débloqué la formation !</span>
-            ) : (
-              <span className="text-gray-300">
-                {90 - progressPercentage}% restant pour débloquer
-              </span>
-            )}
-          </p>
-        </div>
-
-        {isUnlocked ? (
-          <Button
-            onClick={onClaim}
-            className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-3 animate-pulse"
-          >
-            🎁 Récupérer ma Formation
-          </Button>
-        ) : (
-          <Button
-            disabled
-            className="w-full bg-gray-600 text-gray-400 cursor-not-allowed py-3"
-          >
-            <Lock className="w-4 h-4 mr-2" />
-            Formation Verrouillée
-          </Button>
-        )}
-
-        <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
-          <h4 className="text-white font-bold mb-2">🚀 Cette formation inclut :</h4>
-          <ul className="text-gray-300 text-sm space-y-1">
-            <li>• 12 modules de formation premium</li>
-            <li>• Accès à la communauté VIP</li>
-            <li>• Support personnalisé</li>
-            <li>• Bonus exclusifs et outils</li>
-          </ul>
+          <div className="bg-white/10 rounded-lg p-3 backdrop-blur-sm">
+            <div className="text-yellow-400 font-medium">💡 Templates</div>
+            <div className="text-gray-300">Outils prêts à l'emploi</div>
+          </div>
         </div>
       </CardContent>
     </Card>
